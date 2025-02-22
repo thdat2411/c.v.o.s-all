@@ -28,7 +28,7 @@ import {
 import { Logger } from "@medusajs/medusa";
 import { RemoteLink } from "@medusajs/modules-sdk";
 
-// HINT:
+/// HINT:
 // - Cường seeding data bằng code
 // - Sợ data chuẩn lẫn lộn với data không chuẩn? Xóa hết luôn. Cái nào cần thì chạy script seeding, vậy thôi
 // - https://docs.medusajs.com/resources/medusa-cli/commands/db

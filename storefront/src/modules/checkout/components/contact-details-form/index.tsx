@@ -48,46 +48,18 @@ const ContactDetailsForm = ({
         label="Email"
         name="email"
         autoComplete="email"
-        value={formData["email"]}
+        value={formData["email"] ?? ""}
         onChange={handleChange}
         required
         data-testid="email-input"
         className="small:col-span-2"
       />
-      <Input
-        label="Invoice recipient"
-        name="invoice_recipient"
-        autoComplete="family-name"
-        value={formData["invoice_recipient"]}
-        onChange={handleChange}
-        data-testid="invoice-recipient-input"
-      />
-      <Input
-        label="Cost center"
-        name="cost_center"
-        value={formData["cost_center"]}
-        onChange={handleChange}
-        data-testid="cost-center-input"
-      />
-      <Input
-        label="Requisition number"
-        name="requisition_number"
-        value={formData["requisition_number"]}
-        onChange={handleChange}
-        data-testid="requisition-number-input"
-      />
-      <Input
-        label="Door code/goods mark"
-        name="door_code"
-        value={formData["door_code"]}
-        onChange={handleChange}
-        data-testid="door-code-input"
-      />
+
       <div className="col-span-2">
         <Input
           label="Notes"
           name="notes"
-          value={formData["notes"]}
+          value={formData["notes"] ?? ""}
           onChange={handleChange}
           data-testid="notes-input"
           className="small:col-span-2"

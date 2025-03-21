@@ -19,6 +19,8 @@ import {
 } from "./cookies"
 import { retrieveCart, updateCart } from "./cart"
 
+
+
 export const retrieveCustomer = async (): Promise<B2BCustomer | null> => {
   const headers = {
     ...(await getAuthHeaders()),

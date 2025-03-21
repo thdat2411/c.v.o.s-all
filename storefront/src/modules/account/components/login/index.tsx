@@ -1,5 +1,5 @@
 "use client"
-import { useActionState } from "react"
+import { MouseEventHandler, useActionState } from "react"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import { Checkbox, Text } from "@medusajs/ui"
 import Input from "@modules/common/components/input"
@@ -8,12 +8,15 @@ import { SubmitButton } from "@modules/checkout/components/submit-button"
 import { login } from "@lib/data/customer"
 import Button from "@modules/common/components/button"
 import { Google } from "@medusajs/icons"
+import { signIn, useSession } from "next-auth/react"
+
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
 }
 
 const Login = ({ setCurrentView }: Props) => {
+  const { data: session } = useSession()
   const [message, formAction] = useActionState(login, null)
   const loginWithGoogle = async (
     event: React.MouseEvent<HTMLButtonElement>

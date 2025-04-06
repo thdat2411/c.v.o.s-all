@@ -4,7 +4,6 @@ import { Container } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import { B2BCustomer } from "types/global"
 
 const PRODUCT_LIMIT = 12
 
@@ -15,24 +14,25 @@ type PaginatedProductsParams = {
   id?: string[]
   order?: string
   customer_group_id?: string
+  search?: string
 }
 
 export default async function PaginatedProducts({
   sortBy,
+  search,
   page,
   collectionId,
   categoryId,
   productsIds,
   countryCode,
-  customer,
 }: {
   sortBy?: SortOptions
+  search?: string
   page: number
   collectionId?: string
   categoryId?: string
   productsIds?: string[]
   countryCode: string
-  customer: B2BCustomer | null
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
@@ -64,6 +64,7 @@ export default async function PaginatedProducts({
     page,
     queryParams,
     sortBy,
+    search,
     countryCode,
   })
 

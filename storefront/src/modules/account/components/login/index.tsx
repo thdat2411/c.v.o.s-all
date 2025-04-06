@@ -9,54 +9,33 @@ import { login } from "@lib/data/customer"
 import Button from "@modules/common/components/button"
 import { Google } from "@medusajs/icons"
 import { signIn, useSession } from "next-auth/react"
-
+import { sdk } from "@lib/config"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
 }
 
 const Login = ({ setCurrentView }: Props) => {
-  const { data: session } = useSession()
   const [message, formAction] = useActionState(login, null)
   const loginWithGoogle = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault()
     try {
-      const result = await fetch(`http://localhost:9000/auth/customer/google`, {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }).then((res) => res.json())
+      const result = await sdk.auth.login("customer", "google", {})
 
-      if (result.location) {
+      if (typeof result === "object" && result.location) {
         // redirect to Google for authentication
         window.location.href = result.location
+
         return
       }
 
-      if (!result.token) {
+      if (typeof result !== "string") {
         // result failed, show an error
         alert("Authentication failed")
         return
       }
-
-      // authentication successful
-      const { customer } = await fetch(
-        `http://localhost:9000/store/customers/me`,
-        {
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${result.token}`,
-            "x-publishable-api-key":
-              "pk_c0a85c0e1426da5892cffc0fb9c9758f1d04af162b198c8e5425842896925470",
-          },
-        }
-      ).then((res) => res.json())
     } catch (error) {
       console.error("Error during login with Google:", error)
     }
@@ -108,6 +87,9 @@ const Login = ({ setCurrentView }: Props) => {
             <Button
               variant="secondary"
               onClick={loginWithGoogle}
+              // onClick={() =>
+              //   signIn("google", { callbackUrl: "/googleCallBack" })
+              // }
               className="w-full h-10 relative overflow-hidden rounded-full bg-white text-black"
               data-testid="google-button"
             >

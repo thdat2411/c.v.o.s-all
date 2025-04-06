@@ -67,10 +67,12 @@ export const getProductByHandle = async (handle: string, regionId: string) => {
 
 export const listProducts = async ({
   pageParam = 1,
+  search,
   queryParams,
   countryCode,
 }: {
   pageParam?: number
+  search?: string
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   countryCode: string
 }): Promise<{
@@ -98,19 +100,31 @@ export const listProducts = async ({
     ...(await getCacheOptions("products")),
   }
 
+  // If search term is provided, use the listProductsBySearchTerms logic
+  const query = search
+    ? {
+      limit,
+      offset,
+      region_id: region.id,
+      fields: "*variants.calculated_price",
+      q: search, // Search term applied here
+      ...queryParams,
+    }
+    : {
+      limit,
+      offset,
+      region_id: region.id,
+      fields: "*variants.calculated_price",
+      ...queryParams,
+    }
+
   return sdk.client
     .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
       `/store/products`,
       {
         credentials: "include",
         method: "GET",
-        query: {
-          limit,
-          offset,
-          region_id: region.id,
-          fields: "*variants.calculated_price",
-          ...queryParams,
-        },
+        query,
         headers,
         next,
         cache: "force-cache",
@@ -124,11 +138,12 @@ export const listProducts = async ({
           products,
           count,
         },
-        nextPage: nextPage,
+        nextPage,
         queryParams,
       }
     })
 }
+
 
 /**
  * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.
@@ -138,12 +153,14 @@ export const listProductsWithSort = async ({
   page = 0,
   queryParams,
   sortBy = "created_at",
+  search,
   countryCode,
 }: {
   page?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   sortBy?: SortOptions
   countryCode: string
+  search?: string
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -151,9 +168,11 @@ export const listProductsWithSort = async ({
 }> => {
   const limit = queryParams?.limit || 12
 
+
   const {
     response: { products, count },
   } = await listProducts({
+    search,
     pageParam: 0,
     queryParams: {
       ...queryParams,
@@ -179,3 +198,4 @@ export const listProductsWithSort = async ({
     queryParams,
   }
 }
+

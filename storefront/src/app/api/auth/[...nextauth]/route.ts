@@ -6,9 +6,24 @@ const handler = NextAuth({
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            // Custom Google authorization URL to ensure `code` is available in the callback
         }),
     ],
+    callbacks: {
+        async session({ session, token }) {
+            return session
+        },
+        async jwt({ token, account, profile }) {
+            if (account && profile) {
+                token.id = profile.sub // You can store the user ID in the token
+            }
+            return token
+        },
+    },
+    debug: process.env.NODE_ENV !== "production",
+    session: {
+        strategy: "jwt",
+    },
+    secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

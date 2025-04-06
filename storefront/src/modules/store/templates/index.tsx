@@ -35,7 +35,6 @@ const StoreTemplate = ({
                 sortBy={sort}
                 page={pageNumber}
                 countryCode={countryCode}
-                customer={null}
               />
             </Suspense>
           </div>

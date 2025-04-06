@@ -3,7 +3,6 @@ import { Toaster } from "@medusajs/ui"
 import { Analytics } from "@vercel/analytics/next"
 import { GeistSans } from "geist/font/sans"
 import { Metadata } from "next"
-import { SessionProvider } from "next-auth/react"
 import "styles/globals.css"
 import AuthContext from "./context/AuthContext"
 

@@ -1,16 +1,33 @@
+"use client"
+import { HttpTypes } from "@medusajs/types"
 import AccountButton from "@modules/account/components/account-button"
 import CartButton from "@modules/cart/components/cart-button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import FilePlus from "@modules/common/icons/file-plus"
 import LogoIcon from "@modules/common/icons/logo"
 import { MegaMenuWrapper } from "@modules/layout/components/mega-menu"
+import SearchBar from "@modules/layout/components/search-bar"
 import { RequestQuotePrompt } from "@modules/quotes/components/request-quote-prompt"
 import SkeletonAccountButton from "@modules/skeletons/components/skeleton-account-button"
 import SkeletonCartButton from "@modules/skeletons/components/skeleton-cart-button"
 import SkeletonMegaMenu from "@modules/skeletons/components/skeleton-mega-menu"
+import { B2BCart, B2BCustomer } from "@starter/types"
+import { StoreFreeShippingPrice } from "@starter/types/shipping-option/http"
 import { Suspense } from "react"
 
-export function NavigationHeader() {
+interface NavigationHeaderProps {
+  customer: B2BCustomer | null
+  cart: B2BCart | null
+  categories: HttpTypes.StoreProductCategory[]
+  freeShippingPrices: StoreFreeShippingPrice[] | null
+}
+
+export function NavigationHeader({
+  customer,
+  cart,
+  categories,
+  freeShippingPrices,
+}: NavigationHeaderProps) {
   return (
     <div className="sticky top-0 inset-x-0 group bg-white text-zinc-900 small:p-4 p-2 text-sm border-b duration-200 border-ui-border-base z-50">
       <header className="flex w-full content-container relative small:mx-auto justify-between">
@@ -30,20 +47,21 @@ export function NavigationHeader() {
               <ul className="space-x-4 hidden small:flex">
                 <li>
                   <Suspense fallback={<SkeletonMegaMenu />}>
-                    <MegaMenuWrapper />
+                    <MegaMenuWrapper categories={categories} />
                   </Suspense>
                 </li>
               </ul>
             </nav>
           </div>
           <div className="flex justify-end items-center gap-2">
-            <div className="relative mr-2 hidden small:inline-flex">
+            {/* <div className="relative mr-2 hidden small:inline-flex">
               <input
                 type="text"
                 placeholder="Search for products"
                 className="bg-gray-100 text-zinc-900 px-4 py-2 rounded-full pr-10 shadow-borders-base hidden small:inline-block"
               />
-            </div>
+            </div> */}
+            <SearchBar />
 
             <div className="h-4 w-px bg-neutral-300" />
 
@@ -55,11 +73,15 @@ export function NavigationHeader() {
             </RequestQuotePrompt>
 
             <Suspense fallback={<SkeletonAccountButton />}>
-              <AccountButton />
+              <AccountButton customer={customer!} />
             </Suspense>
 
             <Suspense fallback={<SkeletonCartButton />}>
-              <CartButton />
+              <CartButton
+                cart={cart!}
+                customer={customer!}
+                freeShippingPrices={freeShippingPrices!}
+              />
             </Suspense>
           </div>
         </div>

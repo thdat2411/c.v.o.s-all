@@ -4,6 +4,7 @@ import { Container } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { useEffect } from "react"
 
 const PRODUCT_LIMIT = 12
 
@@ -61,12 +62,14 @@ export default async function PaginatedProducts({
   let {
     response: { products, count },
   } = await listProductsWithSort({
+    search,
     page,
     queryParams,
     sortBy,
-    search,
     countryCode,
   })
+
+  console.log(products)
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)
 

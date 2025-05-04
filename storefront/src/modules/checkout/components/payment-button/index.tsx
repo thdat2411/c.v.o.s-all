@@ -83,12 +83,12 @@ const StripePaymentButton = ({
 
     const clientSecret = paymentSession?.data?.client_secret as string
 
-    await stripe
-      .confirmPayment({
+    try {
+      const { paymentIntent, error } = await stripe.confirmPayment({
         elements,
         clientSecret,
         confirmParams: {
-          return_url: `${window.location.origin}/api/capture-payment/${cart.id}?country_code=${countryCode}`,
+          return_url: `${window.location.origin}/api/capture-payment/${cart.id}`,
           payment_method_data: {
             billing_details: {
               name:
@@ -110,23 +110,25 @@ const StripePaymentButton = ({
         },
         redirect: "if_required",
       })
-      .then(({ error }) => {
-        if (error) {
-          const pi = error.payment_intent
 
-          if (
-            (pi && pi.status === "requires_capture") ||
-            (pi && pi.status === "succeeded")
-          ) {
-            onPaymentCompleted()
-          }
-
-          setErrorMessage(error.message || null)
-          return
-        }
-
+      if (error) {
+        setErrorMessage(error.message || null)
         return
-      })
+      }
+
+      if (paymentIntent) {
+        if (
+          paymentIntent.status === "requires_capture" ||
+          paymentIntent.status === "succeeded"
+        ) {
+          onPaymentCompleted()
+        }
+      }
+    } catch {
+      setErrorMessage("An error occurred while processing the payment.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   useEffect(() => {

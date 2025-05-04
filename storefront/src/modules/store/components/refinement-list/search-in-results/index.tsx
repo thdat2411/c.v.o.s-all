@@ -4,20 +4,31 @@ import { useRouter, useSearchParams } from "next/navigation"
 
 const SearchInResults = ({ listName }: { listName?: string }) => {
   const [searchTerm, setSearchTerm] = useState("")
+  const [debouncedTerm, setDebouncedTerm] = useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const placeholder = listName ? `Search in ${listName}` : "Search in products"
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedTerm(searchTerm)
+    }, 300)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [searchTerm])
+
+  useEffect(() => {
     const query = new URLSearchParams(searchParams)
-    if (searchTerm.length > 0) {
-      query.set("search", searchTerm)
+    if (debouncedTerm.length > 0) {
+      query.set("search", debouncedTerm)
     } else {
       query.delete("search")
     }
     router.push(`?${query.toString()}`)
-  }, [searchTerm])
+  }, [debouncedTerm])
 
   return (
     <div className="group relative text-sm focus-within:border-neutral-500 rounded-t-lg focus-within:outline focus-within:outline-neutral-500">

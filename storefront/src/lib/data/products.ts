@@ -92,6 +92,56 @@ export const listProducts = async ({
     }
   }
 
+  // If a search term is provided, use the alternate transformer API
+  if (search && search.trim().length > 0) {
+    try {
+      const res = await fetch(
+        `http://localhost:8081/search?q=${search}`,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+
+      if (!res.ok) {
+        throw new Error(`Search fetch failed with status ${res.status}`)
+      }
+
+      const data = await res.json()
+      const products = data.products || []
+      let fullProducts: HttpTypes.StoreProduct[] = [];
+      if (products.length > 0) {
+        const productIds = products.map((product: any) => product.id);
+
+        // Wait for the Promise to resolve using await
+        const { products: retrievedProducts } = await sdk.store.product.list({
+          id: productIds,
+          fields: "*variants.calculated_price",
+        });
+
+        fullProducts = retrievedProducts;
+      }
+
+      const count = data.count || 0
+      const nextPage = count > offset + limit ? pageParam + 1 : null
+
+      return {
+        response: {
+          products: fullProducts,
+          count,
+        },
+        nextPage,
+        queryParams,
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error)
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+      }
+    }
+  }
+
+  // Otherwise, use the default Medusa store API
   const headers = {
     ...(await getAuthHeaders()),
   }
@@ -100,23 +150,13 @@ export const listProducts = async ({
     ...(await getCacheOptions("products")),
   }
 
-  // If search term is provided, use the listProductsBySearchTerms logic
-  const query = search
-    ? {
-      limit,
-      offset,
-      region_id: region.id,
-      fields: "*variants.calculated_price",
-      q: search, // Search term applied here
-      ...queryParams,
-    }
-    : {
-      limit,
-      offset,
-      region_id: region.id,
-      fields: "*variants.calculated_price",
-      ...queryParams,
-    }
+  const query = {
+    limit,
+    offset,
+    region_id: region.id,
+    fields: "*variants.calculated_price",
+    ...queryParams,
+  }
 
   return sdk.client
     .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
@@ -143,6 +183,7 @@ export const listProducts = async ({
       }
     })
 }
+
 
 
 /**
@@ -198,4 +239,6 @@ export const listProductsWithSort = async ({
     queryParams,
   }
 }
+
+
 

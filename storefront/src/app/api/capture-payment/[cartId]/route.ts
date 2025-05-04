@@ -37,13 +37,7 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
 
     const order = await placeOrder(cartId)
 
-    if (!order) {
-        return NextResponse.redirect(
-            `${origin}/${countryCode}/cart?step=review&error=order_failed`
-        )
-    }
-
     return NextResponse.redirect(
-        `${origin}/${countryCode}/order/${order.id}/confirmed`
+        `${origin}/${countryCode}/order/${order?.id}/confirmed`
     )
 }

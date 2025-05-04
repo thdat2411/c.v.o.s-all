@@ -32,6 +32,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "github.com",
       },
+      {
+        protocol: "https",
+        hostname: "cms-assets.xboxservices.com",
+      },
+      {
+        protocol: "https",
+        hostname: "store-images.s-microsoft.com",
+      },
+      {
+        protocol: "https",
+        hostname: "assets.nintendo.com",
+      },
     ],
   },
 }

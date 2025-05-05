@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react"
-import { HttpTypes } from "@medusajs/types"
+import { HttpTypes, StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Image from "next/image"
 import { sdk } from "@lib/config"
 
-export function SearchBar() {
+export function SearchBar({ region }: { region: StoreRegion }) {
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [loading, setLoading] = useState(false)
@@ -59,6 +59,7 @@ export function SearchBar() {
           const { products: retrievedProducts } = await sdk.store.product.list({
             id: productIds,
             fields: "*variants.calculated_price",
+            region_id: region.id,
           })
 
           fullProducts = retrievedProducts

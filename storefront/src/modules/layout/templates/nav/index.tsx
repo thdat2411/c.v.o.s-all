@@ -1,5 +1,5 @@
 "use client"
-import { HttpTypes } from "@medusajs/types"
+import { HttpTypes, StoreRegion } from "@medusajs/types"
 import AccountButton from "@modules/account/components/account-button"
 import CartButton from "@modules/cart/components/cart-button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -16,6 +16,7 @@ import { StoreFreeShippingPrice } from "@starter/types/shipping-option/http"
 import { Suspense } from "react"
 
 interface NavigationHeaderProps {
+  region: StoreRegion | null
   customer: B2BCustomer | null
   cart: B2BCart | null
   categories: HttpTypes.StoreProductCategory[]
@@ -23,6 +24,7 @@ interface NavigationHeaderProps {
 }
 
 export function NavigationHeader({
+  region,
   customer,
   cart,
   categories,
@@ -61,7 +63,7 @@ export function NavigationHeader({
                 className="bg-gray-100 text-zinc-900 px-4 py-2 rounded-full pr-10 shadow-borders-base hidden small:inline-block"
               />
             </div> */}
-            <SearchBar />
+            <SearchBar region={region!} />
 
             <div className="h-4 w-px bg-neutral-300" />
 

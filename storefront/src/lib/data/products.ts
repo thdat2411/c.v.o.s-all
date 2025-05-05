@@ -116,6 +116,7 @@ export const listProducts = async ({
         const { products: retrievedProducts } = await sdk.store.product.list({
           id: productIds,
           fields: "*variants.calculated_price",
+          region_id: region.id,
         });
 
         fullProducts = retrievedProducts;
@@ -123,7 +124,7 @@ export const listProducts = async ({
 
       const count = data.count || 0
       const nextPage = count > offset + limit ? pageParam + 1 : null
-
+      console.log(fullProducts, "fullProducts")
       return {
         response: {
           products: fullProducts,

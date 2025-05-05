@@ -2,6 +2,7 @@ import { retrieveCart } from "@lib/data/cart"
 import { listCategories } from "@lib/data/categories"
 import { retrieveCustomer } from "@lib/data/customer"
 import { listCartFreeShippingPrices } from "@lib/data/fulfillment"
+import { getRegion, retrieveRegion } from "@lib/data/regions"
 import { getBaseURL } from "@lib/util/env"
 import { ArrowUpRightMini, ExclamationCircleSolid } from "@medusajs/icons"
 import { ChatWidget } from "@modules/chat/chatwidget"
@@ -16,11 +17,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
-export default async function PageLayout(props: { children: React.ReactNode }) {
+export default async function PageLayout(props: {
+  children: React.ReactNode
+  params: Promise<{ countryCode: string }>
+}) {
   const customer = await retrieveCustomer().catch(() => null)
   const cart = await retrieveCart().catch(() => null)
   let freeShippingPrices: StoreFreeShippingPrice[] = []
   const categories = await listCategories().catch(() => [])
+  const params = await props.params
+  const { countryCode } = params
+  const region = await getRegion(countryCode)
 
   if (cart) {
     freeShippingPrices = await listCartFreeShippingPrices(cart.id)
@@ -33,6 +40,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         cart={cart}
         categories={categories}
         freeShippingPrices={freeShippingPrices}
+        region={region!}
       />
       <div className="flex items-center text-neutral-50 justify-center small:p-4 p-2 text-center bg-neutral-900 small:gap-2 gap-1 text-sm">
         <div className="flex flex-col small:flex-row small:gap-2 gap-1 items-center">

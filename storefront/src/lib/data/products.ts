@@ -96,7 +96,7 @@ export const listProducts = async ({
   if (search && search.trim().length > 0) {
     try {
       const res = await fetch(
-        `http://localhost:8081/search?q=${search}`,
+        `http://localhost:8081/search?q=${search}&limit=50`,
         {
           headers: { "Content-Type": "application/json" },
         }

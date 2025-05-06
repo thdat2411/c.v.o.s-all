@@ -43,7 +43,7 @@ export function SearchBar({ region }: { region: StoreRegion }) {
       try {
         setLoading(true)
         const res = await fetch(
-          `http://localhost:8081/search?q=${debouncedQuery}`,
+          `http://localhost:8081/search?q=${debouncedQuery}&limit=10`,
           {
             headers: { "Content-Type": "application/json" },
           }
